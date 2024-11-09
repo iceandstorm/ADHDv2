@@ -1,0 +1,11 @@
+{
+	"id": "ADHDv2",
+	"name": "TomPlugin",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Adhs helper app + line moving.",
+	"author": "Tom",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
