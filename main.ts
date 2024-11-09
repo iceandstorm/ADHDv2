@@ -17,16 +17,7 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginManifest, Plugi
 		"Evaluation"
 	  ];
 
-// Remember to rename these classes and interfaces!
 
-
-/*
-
-> Save the daily and total score into the settings 
-> Have "the plan" complete
-> 
-
-*/
 
 interface MyPluginSettings {
 
