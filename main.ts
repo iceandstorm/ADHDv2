@@ -107,7 +107,15 @@ export default class MyPlugin extends Plugin {
 		this.addCommand ({id: "ADHD_ToggleDebugMode", name: "ADHD_ToggleDebugMode", editorCallback: (editor: Editor, view: MarkdownView) => {if(this.debugMode == false) this.debugMode = true; else this.debugMode = false; new Notice(`Debugmode: ${this.debugMode}`) }});
 
 
-
+		this.addCommand
+		({
+			id: "ToggleLineCompletionState",
+			name: "Toggle line completion state",
+			editorCallback: (editor: Editor, view) => 
+				{
+					this.clickline();	
+				}	
+		});
 		
 
 		this.addCommand
@@ -608,7 +616,7 @@ export default class MyPlugin extends Plugin {
 
 						const sharpCount = (lineText.match(/#/g) || []).length;
 						const exclemationmarkCount = (lineText.match(/!/g) || []).length;
-						const questionmarkCount = (lineText.match(/'?'/g) || []).length;
+						const questionmarkCount = (lineText.match(/\?/g) || []).length;
 						const tabCount = (lineText.match(/\t/g) || []).length;
 						const scoredelta = Math.floor((sharpCount * this.settings.SharpPointValue + exclemationmarkCount * this.settings.ExclemationmarkPointValue + questionmarkCount * this.settings.QuestionmarkPointValue) / (leadingWhitespaceCount+1) +1);
 
@@ -1197,6 +1205,7 @@ async ReadProperty(notePath: string, propertyKey: string): Promise<string | numb
 
 
 // Write or Update a Property in the YAML Front Matter of a Given Note
+/*
 async WriteProperty(notePath: string, propertyKey: string, newValue: string | number): Promise<void> {
 	const ADHDFile = this.app.vault.getAbstractFileByPath(notePath);
 
@@ -1225,6 +1234,7 @@ async WriteProperty(notePath: string, propertyKey: string, newValue: string | nu
 		new Notice(`Note not found or is not a file at path: ${notePath}`);
 	}
 }
+	*/
 
 /* //does function but creates the external mod warning each time when the plan is open that is annying
 async WriteProperties(notePath: string, properties: { [key: string]: string | number }): Promise<void> {
@@ -1265,6 +1275,7 @@ async WriteProperties(notePath: string, properties: { [key: string]: string | nu
 */
 async WriteProperties(notePath: string, properties: { [key: string]: string | number }, editor: Editor | null = null): Promise<void> {
     const file = this.app.vault.getAbstractFileByPath(notePath);
+	const cursorPosition = editor?.getCursor();
 
     if (file instanceof TFile) {
         let content = '';
@@ -1311,9 +1322,13 @@ async WriteProperties(notePath: string, properties: { [key: string]: string | nu
         if (isEditorActive && editor) {
             // Update content directly in the editor if it is active
             editor.setValue(updatedContent);
+			editor.setCursor({ 
+					line: cursorPosition?.line ?? 0,
+					ch: cursorPosition?.ch ?? 0});
         } else {
             // If editor is not open, write to the file in the vault
             await this.app.vault.modify(file, updatedContent);
+
         }
     } else {
         console.warn(`Note not found or is not a file at path: ${notePath}`);
@@ -1327,13 +1342,13 @@ async WriteProperties(notePath: string, properties: { [key: string]: string | nu
 async SetCurrentScorePropertytoZero() {
 	const currentScore = await this.ReadProperty(this.settings.NotePath, "CurrentScore");
 	new Notice(`Current Score was: ${currentScore}`);
-	await this.WriteProperty(this.settings.NotePath, "CurrentScore", 0);
+	await this.WriteProperties(this.settings.NotePath, {"CurrentScore": 0});
   }
   
   async SetTotalScorePropertytoZero() {
 	const totalScore = await this.ReadProperty(this.settings.NotePath, "TotalScore");
 	new Notice(`Total Score was: ${totalScore}`);
-	await this.WriteProperty(this.settings.NotePath, "TotalScore", 0);
+	await this.WriteProperties(this.settings.NotePath, {"TotalScore": 0} );
   }
   
 
